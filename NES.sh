@@ -185,9 +185,9 @@ do_rename() {
 
 do_rename "${RUNDIR}"
 
-#echo -n "Resizing Reddit thumbs..."
-#do_mogrify "${RUNDIR}"
-#echo "done"
+echo -n "Resizing Reddit thumbs..."
+do_mogrify "${RUNDIR}"
+echo "done"
 
 new_additions "${RUNDIR}" "${TNDIR}"
 not_in_db "${RUNDIR}" "Reddit"
