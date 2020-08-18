@@ -16,164 +16,179 @@ new_additions() {
 not_in_db() {
   for fich in "${1}"/*.png; do
     GAME=$(basename "${fich}" .png)
-    if ! grep -q -w "\"${GAME}\"" "$DB"; then
-      echo "Thumb exists but not in DB: ${GAME}"
+    if ! sed -e 's/&/_/g' -e 's/:/_/g' -e 's/\*/_/g' -e 's!/!_!g' -e 's/`/_/g' -e 's/</_/g' -e 's/>/_/g' -e 's/?/_/g' -e 's/\\/_/g' -e 's/|/_/g' "$DB" | grep -q -w "\"${GAME}\""; then
+      echo "${2} thumb not in DB: ${GAME}"
     fi
   done
 }
 
 do_mogrify() {
-  mogrify -format png -resize 512x "${1}"/*.png 2> /dev/null
+  for fich in "${1}"/*.png; do
+    if identify "${fich}" | grep -q -v 512x; then
+      mogrify -format png -resize 512x "${fich}" 2> /dev/null
+      echo -n "."
+    fi
+  done
 }
 
-echo -n "Renaming thumbnails... "
-mv "${RUNDIR}/10-Yard Fight (USA).png" "${RUNDIR}/10-Yard Fight (USA, Europe).png" 2> /dev/null
-mv "${RUNDIR}/1942 (USA).png" "${RUNDIR}/1942 (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/1943 (USA).png" "${RUNDIR}/1943 - The Battle of Midway (USA).png" 2> /dev/null
-mv "${RUNDIR}/3-D Worldrunner (USA).png" "${RUNDIR}/3-D WorldRunner (USA).png" 2> /dev/null
-mv "${RUNDIR}/Abadox (USA).png" "${RUNDIR}/Abadox - The Deadly Inner War (USA).png" 2> /dev/null
-mv "${RUNDIR}/A Boy and His Blob (USA).png" "${RUNDIR}/David Crane's A Boy and His Blob - Trouble on Blobolonia (USA).png" 2> /dev/null
-mv "${RUNDIR}/Addams Family, The - Pugsley_s Scavenger Hunt (USA).png" "${RUNDIR}/Addams Family, The - Pugsley's Scavenger Hunt (USA).png" 2> /dev/null
-mv "${RUNDIR}/Advanced D_D - DragonStrike (USA).png" "${RUNDIR}/Advanced Dungeons _ Dragons - DragonStrike (USA).png" 2> /dev/null
-mv "${RUNDIR}/Advanced D_D - Heroes of the Lance (USA).png" "${RUNDIR}/Advanced Dungeons _ Dragons - Heroes of the Lance (USA).png" 2> /dev/null
-mv "${RUNDIR}/Advanced D_D - Hillsfar (USA).png" "${RUNDIR}/Advanced Dungeons _ Dragons - Hillsfar (USA).png" 2> /dev/null
-mv "${RUNDIR}/Advanced D_D - Pool of Radiance (USA).png" "${RUNDIR}/Advanced Dungeons _ Dragons - Pool of Radiance (USA).png" 2> /dev/null
-mv "${RUNDIR}/Adventure Island 2 (USA).png" "${RUNDIR}/Adventure Island II (USA).png" 2> /dev/null
-mv "${RUNDIR}/Adventures of Gilligan_s Island, The (USA).png" "${RUNDIR}/Adventures of Gilligan's Island, The (USA).png" 2> /dev/null
-mv "${RUNDIR}/Adventures of Rocky and Bullwinkle, The (USA).png" "${RUNDIR}/Adventures of Rocky and Bullwinkle and Friends, The (USA).png" 2> /dev/null
-mv "${RUNDIR}/Afterburner (USA) (Tengen Unlicensed).png" "${RUNDIR}/After Burner (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Alien Syndrome (USA) (Tengen Unlicensed).png" "${RUNDIR}/Alien Syndrome (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/A Nightmare on Elm Street (USA).png" "${RUNDIR}/Nightmare on Elm Street, A (USA).png" 2> /dev/null
-mv "${RUNDIR}/Arkista_s Ring (USA).png" "${RUNDIR}/Arkista's Ring (USA).png" 2> /dev/null
-mv "${RUNDIR}/Bard_s Tale, The (USA).png" "${RUNDIR}/Bard's Tale, The (USA).png" 2> /dev/null
-mv "${RUNDIR}/Baseball (USA).png" "${RUNDIR}/Baseball (USA, Europe).png" 2> /dev/null
-mv "${RUNDIR}/Bases Loaded 2 (USA).png" "${RUNDIR}/Bases Loaded II - Second Season (USA).png" 2> /dev/null
-mv "${RUNDIR}/Base Wars - Cyber Stadium Series (USA).png" "${RUNDIR}/Cyber Stadium Series - Base Wars (USA).png" 2> /dev/null
-mv "${RUNDIR}/Bonk_s Adventure (USA).png" "${RUNDIR}/Bonk's Adventure (USA).png" 2> /dev/null
-mv "${RUNDIR}/Bucky O_Hare (USA).png" "${RUNDIR}/Bucky O'Hare (USA).png" 2> /dev/null
-mv "${RUNDIR}/Bugs Bunny - Birthday Blowout (USA).png" "${RUNDIR}/Bugs Bunny Birthday Blowout, The (USA).png" 2> /dev/null
-mv "${RUNDIR}/Bugs Bunny - Crazy Castle (USA).png" "${RUNDIR}/Bugs Bunny Crazy Castle, The (USA).png" 2> /dev/null
-mv "${RUNDIR}/Castlevania III (USA).png" "${RUNDIR}/Castlevania III - Dracula's Curse (USA).png" 2> /dev/null
-mv "${RUNDIR}/Castlevania II (USA).png" "${RUNDIR}/Castlevania II - Simon's Quest (USA).png" 2> /dev/null
-mv "${RUNDIR}/Chip n Dale Rescue Rangers 2 (USA).png" "${RUNDIR}/Chip 'n Dale - Rescue Rangers 2 (USA).png" 2> /dev/null
-mv "${RUNDIR}/Chip n Dale Rescue Rangers (USA).png" "${RUNDIR}/Chip 'n Dale - Rescue Rangers (USA).png" 2> /dev/null
-mv "${RUNDIR}/Clu Clu Land (USA).png" "${RUNDIR}/Clu Clu Land (World).png" 2> /dev/null
-mv "${RUNDIR}/Codename - Viper (USA).png" "${RUNDIR}/Code Name - Viper (USA).png" 2> /dev/null
-mv "${RUNDIR}/Digger T. Rock (USA).png" "${RUNDIR}/Digger - The Legend of the Lost City (USA).png" 2> /dev/null
-mv "${RUNDIR}/Donkey Kong 3 (USA).png" "${RUNDIR}/Donkey Kong 3 (World).png" 2> /dev/null
-mv "${RUNDIR}/Donkey Kong Classics (USA).png" "${RUNDIR}/Donkey Kong Classics (USA, Europe).png" 2> /dev/null
-mv "${RUNDIR}/Donkey Kong Jr. Math (USA).png" "${RUNDIR}/Donkey Kong Jr. Math (USA, Europe).png" 2> /dev/null
-mv "${RUNDIR}/Donkey Kong Jr. (USA).png" "${RUNDIR}/Donkey Kong Jr. (World) (Rev 1).png" 2> /dev/null
-mv "${RUNDIR}/Donkey Kong (USA).png" "${RUNDIR}/Donkey Kong (World) (Rev 1).png" 2> /dev/null
-mv "${RUNDIR}/Double Dragon III (USA).png" "${RUNDIR}/Double Dragon III - The Sacred Stones (USA).png" 2> /dev/null
-mv "${RUNDIR}/Double Dragon II (USA).png" "${RUNDIR}/Double Dragon II - The Revenge (USA).png" 2> /dev/null
-mv "${RUNDIR}/Dragon Spirit (USA).png" "${RUNDIR}/Dragon Spirit - The New Legend (USA).png" 2> /dev/null
-mv "${RUNDIR}/Dr. Mario (USA).png" "${RUNDIR}/Dr. Mario (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/Dungeon Magic (USA).png" "${RUNDIR}/Dungeon Magic - Sword of the Elements (USA).png" 2> /dev/null
-mv "${RUNDIR}/Dynowarz (USA).png" "${RUNDIR}/Dynowarz - The Destruction of Spondylus (USA).png" 2> /dev/null
-mv "${RUNDIR}/Earthbound Zero (USA) (Custom, Unreleased).png" "${RUNDIR}/EarthBound Beginnings (USA, Europe) (Virtual Console).png" 2> /dev/null
-mv "${RUNDIR}/Excitebike (USA).png" "${RUNDIR}/Excitebike (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/Fester_s Quest (USA).png" "${RUNDIR}/Fester's Quest (USA).png" 2> /dev/null
-mv "${RUNDIR}/Fire _n Ice (USA).png" "${RUNDIR}/Fire 'n Ice (USA).png" 2> /dev/null
-mv "${RUNDIR}/Flying Dragon (USA).png" "${RUNDIR}/Flying Dragon - The Secret Scroll (USA).png" 2> /dev/null
-mv "${RUNDIR}/Fox_s Peter Pan and the Pirates (USA).png" "${RUNDIR}/Fox's Peter Pan _ the Pirates - The Revenge of Captain Hook (USA).png" 2> /dev/null
-mv "${RUNDIR}/Galaga (USA).png" "${RUNDIR}/Galaga - Demons of Death (USA).png" 2> /dev/null
-mv "${RUNDIR}/Gargoyle_s Quest II (USA).png" "${RUNDIR}/Gargoyle's Quest II (USA).png" 2> /dev/null
-mv "${RUNDIR}/Gauntlet (USA) (Tengen Unlicensed).png" "${RUNDIR}/Gauntlet (USA) (Unl).png" 2> /dev/null
-# mv "${RUNDIR}/Ghost Lion (USA).png" "${RUNDIR}/Ghost Lion (USA).png" 2> /dev/null
-mv "${RUNDIR}/Ghosts _n Goblins (USA).png" "${RUNDIR}/Ghosts'n Goblins (USA).png" 2> /dev/null
-mv "${RUNDIR}/Godzilla 2 (USA).png" "${RUNDIR}/Godzilla 2 - War of the Monsters (USA).png" 2> /dev/null
-mv "${RUNDIR}/Godzilla (USA).png" "${RUNDIR}/Godzilla - Monster of Monsters! (USA).png" 2> /dev/null
-mv "${RUNDIR}/Gremlins 2 (USA).png" "${RUNDIR}/Gremlins 2 - The New Batch (USA).png" 2> /dev/null
-mv "${RUNDIR}/Guardian Legend (USA).png" "${RUNDIR}/Guardian Legend, The (USA).png" 2> /dev/null
-mv "${RUNDIR}/Heavy Shreddin_ (USA).png" "${RUNDIR}/Heavy Shreddin' (USA).png" 2> /dev/null
-mv "${RUNDIR}/Home Alone 2 (USA).png" "${RUNDIR}/Home Alone 2 - Lost in New York (USA).png" 2> /dev/null
-mv "${RUNDIR}/Ice Climber (USA).png" "${RUNDIR}/Ice Climber (USA, Europe, Korea).png" 2> /dev/null
-mv "${RUNDIR}/Ikari Warriors III (USA).png" "${RUNDIR}/Ikari III - The Rescue (USA).png" 2> /dev/null
-mv "${RUNDIR}/Ikari Warriors II (USA).png" "${RUNDIR}/Ikari Warriors II - Victory Road (USA).png" 2> /dev/null
-# mv "${RUNDIR}/Indiana Jones and the Last Crusade (USA).png" "${RUNDIR}/Indiana Jones and the Last Crusade (USA).png" 2> /dev/null
-mv "${RUNDIR}/Indiana Jones and the Temple of Doom (USA) (Tengen Unlicensed).png" "${RUNDIR}/Indiana Jones and the Temple of Doom (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Jackie Chan_s Action Kung Fu (USA).png" "${RUNDIR}/Jackie Chan's Action Kung Fu (USA).png" 2> /dev/null
-mv "${RUNDIR}/Jetsons, The - Cogswell_s Caper (USA).png" "${RUNDIR}/Jetsons, The - Cogswell's Caper (USA).png" 2> /dev/null
-mv "${RUNDIR}/John Elway_s Quarterback (USA).png" "${RUNDIR}/John Elway's Quarterback (USA).png" 2> /dev/null
-mv "${RUNDIR}/Jordan vs. Bird (USA).png" "${RUNDIR}/Jordan vs Bird - One on One (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kabuki Quantum Fighter (USA).png" "${RUNDIR}/Kabuki - Quantum Fighter (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kickmaster (USA).png" "${RUNDIR}/KickMaster (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kid Icarus (USA).png" "${RUNDIR}/Kid Icarus (USA, Europe).png" 2> /dev/null
-mv "${RUNDIR}/Kid Klown (USA).png" "${RUNDIR}/Kid Klown in Night Mayor World (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kid Kool (USA).png" "${RUNDIR}/Kid Kool and the Quest for the Seven Wonder Herbs (USA).png" 2> /dev/null
-mv "${RUNDIR}/King_s Knight (USA).png" "${RUNDIR}/King's Knight (USA).png" 2> /dev/null
-mv "${RUNDIR}/King_s Quest V (USA).png" "${RUNDIR}/King's Quest V (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kirby_s Adventure (USA).png" "${RUNDIR}/Kirby's Adventure (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kiwi Kraze (USA).png" "${RUNDIR}/Kiwi Kraze - A Bird-Brained Adventure! (USA).png" 2> /dev/null
-mv "${RUNDIR}/Krusty_s Fun House (USA).png" "${RUNDIR}/Krusty's Fun House (USA).png" 2> /dev/null
-mv "${RUNDIR}/Kung Fu (USA).png" "${RUNDIR}/Kung Fu (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/Legend of Zelda, The (USA (Full Shield Graphic).png" "${RUNDIR}/Legend of Zelda, The (USA).png" 2> /dev/null
-rm -f "Legend of Zelda, The (USA) (Exposed Cart).png" 2> /dev/null
-mv "${RUNDIR}/Little Nemo - Dream Master (USA).png" "${RUNDIR}/Little Nemo - The Dream Master (USA).png" 2> /dev/null
-mv "${RUNDIR}/Low G Man (USA).png" "${RUNDIR}/Low G Man - The Low Gravity Man (USA).png" 2> /dev/null
-mv "${RUNDIR}/Mach Rider (USA).png" "${RUNDIR}/Mach Rider (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/Mafat Conspiracy, The - Golgo 13 (USA).png" "${RUNDIR}/Golgo 13 - Top Secret Episode (USA).png" 2> /dev/null
-mv "${RUNDIR}/Mappyland (USA).png" "${RUNDIR}/Mappy-Land (USA).png" 2> /dev/null
-mv "${RUNDIR}/Mario Bros. (USA).png" "${RUNDIR}/Mario Bros. (World).png" 2> /dev/null
-mv "${RUNDIR}/M.C Kids (USA).png" "${RUNDIR}/M.C. Kids (USA).png" 2> /dev/null
-mv "${RUNDIR}/Metal Gear II - Snake_s Revenge (USA).png" "${RUNDIR}/Snake's Revenge (USA).png" 2> /dev/null
-# mv "${RUNDIR}/MetalMech - Man _ Machine (USA).png" "${RUNDIR}/MetalMech - Man _ Machine (USA).png" 2> /dev/null
-mv "${RUNDIR}/Metalstorm (USA).png" "${RUNDIR}/Metal Storm (USA).png" 2> /dev/null
-mv "${RUNDIR}/Mike Tyson_s Punch Out!! (USA).png" "${RUNDIR}/Mike Tyson's Punch-Out!! (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/Milon_s Secret Castle (USA).png" "${RUNDIR}/Milon's Secret Castle (USA).png" 2> /dev/null
-mv "${RUNDIR}/Monster In My Pocket (USA).png" "${RUNDIR}/Monster in My Pocket (USA).png" 2> /dev/null
-mv "${RUNDIR}/Ms. Pac-Man (USA) (Tengen Unlicensed).png" "${RUNDIR}/Ms. Pac-Man (USA) (Tengen) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/New Ghostbusters II (USA) (Custom, Unreleased).png" "${RUNDIR}/New Ghostbusters II (USA) (Proto).png" 2> /dev/null
-mv "${RUNDIR}/Ninja Gaiden III (USA).png" "${RUNDIR}/Ninja Gaiden III - The Ancient Ship of Doom (USA).png" 2> /dev/null
-mv "${RUNDIR}/Ninja Gaiden II (USA).png" "${RUNDIR}/Ninja Gaiden II - The Dark Sword of Chaos (USA).png" 2> /dev/null
-mv "${RUNDIR}/Nintendo World Championships 1990 (USA, Custom).png" "${RUNDIR}/Nintendo World Championships 1990 (USA) (Competition Cart).png" 2> /dev/null
-mv "${RUNDIR}/Nobunaga_s Ambition II (USA).png" "${RUNDIR}/Nobunaga's Ambition II (USA).png" 2> /dev/null
-mv "${RUNDIR}/Nobunaga_s Ambition (USA).png" "${RUNDIR}/Nobunaga's Ambition (USA).png" 2> /dev/null
-mv "${RUNDIR}/Pac-Mania (USA) (Tengen Unlicensed).png" "${RUNDIR}/Pac-Mania (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Pinball (USA).png" "${RUNDIR}/Pinball (Japan, USA).png" 2> /dev/null
-mv "${RUNDIR}/Popeye (USA).png" "${RUNDIR}/Popeye (World) (Rev 1).png" 2> /dev/null
-mv "${RUNDIR}/P.O.W. (USA).png" "${RUNDIR}/P.O.W. - Prisoners of War (USA).png" 2> /dev/null
-mv "${RUNDIR}/Puss n Boots - Pero_s Great Adventure (USA).png" "${RUNDIR}/Puss 'n Boots - Pero's Great Adventure (USA).png" 2> /dev/null
-mv "${RUNDIR}/Qix (USA).png" "${RUNDIR}/QIX (USA).png" 2> /dev/null
-mv "${RUNDIR}/Ren _ Stimpy Show, The - Buckeroos! (USA).png" "${RUNDIR}/Ren _ Stimpy Show, The - Buckeroo$! (USA).png" 2> /dev/null
-mv "${RUNDIR}/Rockin_ Kats (USA).png" "${RUNDIR}/Rockin' Kats (USA).png" 2> /dev/null
-mv "${RUNDIR}/Rolling Thunder (USA) (Tengen Unlicensed).png" "${RUNDIR}/Rolling Thunder (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Rush_n Attack (USA).png" "${RUNDIR}/Rush'n Attack (USA).png" 2> /dev/null
-mv "${RUNDIR}/S.C.A.T. (USA).png" "${RUNDIR}/S.C.A.T. - Special Cybernetic Attack Team (USA).png" 2> /dev/null
-mv "${RUNDIR}/Snake Rattle N Roll (USA).png" "${RUNDIR}/Snake Rattle n Roll (USA).png" 2> /dev/null
-mv "${RUNDIR}/Snoopy_s Silly Sports Spectacular! (USA).png" "${RUNDIR}/Snoopy's Silly Sports Spectacular! (USA).png" 2> /dev/null
-mv "${RUNDIR}/Solar Jetman - Hunt for the Golden Warship (USA).png" "${RUNDIR}/Solar Jetman - Hunt for the Golden Warpship (USA).png" 2> /dev/null
-mv "${RUNDIR}/Solomon_s Key (USA).png" "${RUNDIR}/Solomon's Key (USA).png" 2> /dev/null
-mv "${RUNDIR}/Solstice (USA).png" "${RUNDIR}/Solstice - The Quest for the Staff of Demnos (USA).png" 2> /dev/null
-mv "${RUNDIR}/StarTropics II - Zoda_s Revenge (USA).png" "${RUNDIR}/Zoda's Revenge - StarTropics II (USA).png" 2> /dev/null
-mv "${RUNDIR}/Street Fighter 2010 (USA).png" "${RUNDIR}/Street Fighter 2010 - The Final Fight (USA).png" 2> /dev/null
-mv "${RUNDIR}/Super Mario Bros. (USA).png" "${RUNDIR}/Super Mario Bros. (World) (HVC-SM).png" 2> /dev/null
-# mv "${RUNDIR}/Target - Renegade (USA).png" "${RUNDIR}/Target - Renegade (USA).png" 2> /dev/null
-mv "${RUNDIR}/Teenage Mutant Ninja Turtles III (USA).png" "${RUNDIR}/Teenage Mutant Ninja Turtles III - The Manhattan Project (USA).png" 2> /dev/null
-mv "${RUNDIR}/Teenage Mutant Ninja Turtles II (USA).png" "${RUNDIR}/Teenage Mutant Ninja Turtles II - The Arcade Game (USA).png" 2> /dev/null
-mv "${RUNDIR}/Tetris (USA) (Tengen Unlicensed).png" "${RUNDIR}/Tetris (USA) (Tengen) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Tiny Toon Adventures 2 (USA).png" "${RUNDIR}/Tiny Toon Adventures 2 - Trouble in Wackyland (USA).png" 2> /dev/null
-mv "${RUNDIR}/Tiny Toon Adventures - Cartoon Workshop (USA).png" "${RUNDIR}/Tiny Toon Adventures Cartoon Workshop (USA).png" 2> /dev/null
-mv "${RUNDIR}/Toobin_ (USA) (Tengen Unlicensed).png" "${RUNDIR}/Toobin' (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Town _ Country Surf Designs - Thrilla_s Surfari (USA).png" "${RUNDIR}/Town _ Country Surf Designs - Thrilla's Surfari (USA).png" 2> /dev/null
-mv "${RUNDIR}/Untouchables, The (USA) (Official, Variant 1).png" "${RUNDIR}/Untouchables, The (USA).png" 2> /dev/null
-rm -f "Untouchables, The (USA) (Official, Variant 2).png" 2> /dev/null
-mv "${RUNDIR}/Urban Champion (USA).png" "${RUNDIR}/Urban Champion (World).png" 2> /dev/null
-mv "${RUNDIR}/Vindicators (USA) (Tengen Unlicensed).png" "${RUNDIR}/Vindicators (USA) (Unl).png" 2> /dev/null
-mv "${RUNDIR}/Volleyball (USA).png" "${RUNDIR}/Volleyball (USA, Europe).png" 2> /dev/null
-mv "${RUNDIR}/Wario_s Woods (USA).png" "${RUNDIR}/Wario's Woods (USA).png" 2> /dev/null
-mv "${RUNDIR}/Wayne_s World (USA).png" "${RUNDIR}/Wayne's World (USA).png" 2> /dev/null
-mv "${RUNDIR}/Werewolf (USA).png" "${RUNDIR}/Werewolf - The Last Warrior (USA).png" 2> /dev/null
-mv "${RUNDIR}/Whomp _Em (USA).png" "${RUNDIR}/Whomp 'Em (USA).png" 2> /dev/null
-mv "${RUNDIR}/Wizards _ Warriors II - Ironsword (USA).png" "${RUNDIR}/IronSword - Wizards _ Warriors II (USA).png" 2> /dev/null
-# mv "${RUNDIR}/World Champ (USA).png" "${RUNDIR}/World Champ (USA).png" 2> /dev/null
-mv "${RUNDIR}/Wrecking Crew (USA).png" "${RUNDIR}/Wrecking Crew (World).png" 2> /dev/null
-mv "${RUNDIR}/WURM (USA).png" "${RUNDIR}/Wurm - Journey to the Center of the Earth! (USA).png" 2> /dev/null
-mv "${RUNDIR}/Xevious (USA).png" "${RUNDIR}/Xevious - The Avenger (USA).png" 2> /dev/null
-mv "${RUNDIR}/Yoshi_s Cookie (USA).png" "${RUNDIR}/Yoshi's Cookie (USA).png" 2> /dev/null
-echo "done"
+do_rename() {
+  mv "${1}/10-Yard Fight (USA).png" "${1}/10-Yard Fight (USA, Europe).png" 2> /dev/null
+  mv "${1}/1942 (USA).png" "${1}/1942 (Japan, USA).png" 2> /dev/null
+  mv "${1}/1943 (USA).png" "${1}/1943 - The Battle of Midway (USA).png" 2> /dev/null
+  mv "${1}/3-D Worldrunner (USA).png" "${1}/3-D WorldRunner (USA).png" 2> /dev/null
+  mv "${1}/Abadox (USA).png" "${1}/Abadox - The Deadly Inner War (USA).png" 2> /dev/null
+  mv "${1}/A Boy and His Blob (USA).png" "${1}/David Crane's A Boy and His Blob - Trouble on Blobolonia (USA).png" 2> /dev/null
+  mv "${1}/Addams Family, The - Pugsley_s Scavenger Hunt (USA).png" "${1}/Addams Family, The - Pugsley's Scavenger Hunt (USA).png" 2> /dev/null
+  mv "${1}/Advanced D_D - DragonStrike (USA).png" "${1}/Advanced Dungeons _ Dragons - DragonStrike (USA).png" 2> /dev/null
+  mv "${1}/Advanced D_D - Heroes of the Lance (USA).png" "${1}/Advanced Dungeons _ Dragons - Heroes of the Lance (USA).png" 2> /dev/null
+  mv "${1}/Advanced D_D - Hillsfar (USA).png" "${1}/Advanced Dungeons _ Dragons - Hillsfar (USA).png" 2> /dev/null
+  mv "${1}/Advanced D_D - Pool of Radiance (USA).png" "${1}/Advanced Dungeons _ Dragons - Pool of Radiance (USA).png" 2> /dev/null
+  mv "${1}/Adventure Island 2 (USA).png" "${1}/Adventure Island II (USA).png" 2> /dev/null
+  mv "${1}/Adventures of Gilligan_s Island, The (USA).png" "${1}/Adventures of Gilligan's Island, The (USA).png" 2> /dev/null
+  mv "${1}/Adventures of Rocky and Bullwinkle, The (USA).png" "${1}/Adventures of Rocky and Bullwinkle and Friends, The (USA).png" 2> /dev/null
+  mv "${1}/Afterburner (USA) (Tengen Unlicensed).png" "${1}/After Burner (USA) (Unl).png" 2> /dev/null
+  mv "${1}/Alien Syndrome (USA) (Tengen Unlicensed).png" "${1}/Alien Syndrome (USA) (Unl).png" 2> /dev/null
+  mv "${1}/A Nightmare on Elm Street (USA).png" "${1}/Nightmare on Elm Street, A (USA).png" 2> /dev/null
+  mv "${1}/Arkista_s Ring (USA).png" "${1}/Arkista's Ring (USA).png" 2> /dev/null
+  mv "${1}/Bard_s Tale, The (USA).png" "${1}/Bard's Tale, The (USA).png" 2> /dev/null
+  mv "${1}/Baseball (USA).png" "${1}/Baseball (USA, Europe).png" 2> /dev/null
+  mv "${1}/Bases Loaded 2 (USA).png" "${1}/Bases Loaded II - Second Season (USA).png" 2> /dev/null
+  mv "${1}/Base Wars - Cyber Stadium Series (USA).png" "${1}/Cyber Stadium Series - Base Wars (USA).png" 2> /dev/null
+  mv "${1}/Bonk_s Adventure (USA).png" "${1}/Bonk's Adventure (USA).png" 2> /dev/null
+  mv "${1}/Bucky O_Hare (USA).png" "${1}/Bucky O'Hare (USA).png" 2> /dev/null
+  mv "${1}/Bugs Bunny - Birthday Blowout (USA).png" "${1}/Bugs Bunny Birthday Blowout, The (USA).png" 2> /dev/null
+  mv "${1}/Bugs Bunny - Crazy Castle (USA).png" "${1}/Bugs Bunny Crazy Castle, The (USA).png" 2> /dev/null
+  mv "${1}/Castlevania III (USA).png" "${1}/Castlevania III - Dracula's Curse (USA).png" 2> /dev/null
+  mv "${1}/Castlevania II (USA).png" "${1}/Castlevania II - Simon's Quest (USA).png" 2> /dev/null
+  mv "${1}/Chip n Dale Rescue Rangers 2 (USA).png" "${1}/Chip 'n Dale - Rescue Rangers 2 (USA).png" 2> /dev/null
+  mv "${1}/Chip n Dale Rescue Rangers (USA).png" "${1}/Chip 'n Dale - Rescue Rangers (USA).png" 2> /dev/null
+  mv "${1}/Clu Clu Land (USA).png" "${1}/Clu Clu Land (World).png" 2> /dev/null
+  mv "${1}/Codename - Viper (USA).png" "${1}/Code Name - Viper (USA).png" 2> /dev/null
+  mv "${1}/Digger T. Rock (USA).png" "${1}/Digger - The Legend of the Lost City (USA).png" 2> /dev/null
+  mv "${1}/Donkey Kong 3 (USA).png" "${1}/Donkey Kong 3 (World).png" 2> /dev/null
+  mv "${1}/Donkey Kong Classics (USA).png" "${1}/Donkey Kong Classics (USA, Europe).png" 2> /dev/null
+  mv "${1}/Donkey Kong Jr. Math (USA).png" "${1}/Donkey Kong Jr. Math (USA, Europe).png" 2> /dev/null
+  mv "${1}/Donkey Kong Jr. (USA).png" "${1}/Donkey Kong Jr. (World) (Rev 1).png" 2> /dev/null
+  mv "${1}/Donkey Kong (USA).png" "${1}/Donkey Kong (World) (Rev 1).png" 2> /dev/null
+  mv "${1}/Double Dragon III (USA).png" "${1}/Double Dragon III - The Sacred Stones (USA).png" 2> /dev/null
+  mv "${1}/Double Dragon II (USA).png" "${1}/Double Dragon II - The Revenge (USA).png" 2> /dev/null
+  mv "${1}/Dragon Spirit (USA).png" "${1}/Dragon Spirit - The New Legend (USA).png" 2> /dev/null
+  mv "${1}/Dr. Mario (USA).png" "${1}/Dr. Mario (Japan, USA).png" 2> /dev/null
+  mv "${1}/Dungeon Magic (USA).png" "${1}/Dungeon Magic - Sword of the Elements (USA).png" 2> /dev/null
+  mv "${1}/Dynowarz (USA).png" "${1}/Dynowarz - The Destruction of Spondylus (USA).png" 2> /dev/null
+  mv "${1}/Earthbound Zero (USA) (Custom, Unreleased).png" "${1}/EarthBound Beginnings (USA, Europe) (Virtual Console).png" 2> /dev/null
+  mv "${1}/Excitebike (USA).png" "${1}/Excitebike (Japan, USA).png" 2> /dev/null
+  mv "${1}/Fester_s Quest (USA).png" "${1}/Fester's Quest (USA).png" 2> /dev/null
+  mv "${1}/Fire _n Ice (USA).png" "${1}/Fire 'n Ice (USA).png" 2> /dev/null
+  mv "${1}/Flying Dragon (USA).png" "${1}/Flying Dragon - The Secret Scroll (USA).png" 2> /dev/null
+  mv "${1}/Fox_s Peter Pan and the Pirates (USA).png" "${1}/Fox's Peter Pan _ the Pirates - The Revenge of Captain Hook (USA).png" 2> /dev/null
+  mv "${1}/Galaga (USA).png" "${1}/Galaga - Demons of Death (USA).png" 2> /dev/null
+  mv "${1}/Gargoyle_s Quest II (USA).png" "${1}/Gargoyle's Quest II (USA).png" 2> /dev/null
+  mv "${1}/Gauntlet (USA) (Tengen Unlicensed).png" "${1}/Gauntlet (USA) (Unl).png" 2> /dev/null
+  # mv "${1}/Ghost Lion (USA).png" "${1}/Ghost Lion (USA).png" 2> /dev/null
+  mv "${1}/Ghosts _n Goblins (USA).png" "${1}/Ghosts'n Goblins (USA).png" 2> /dev/null
+  mv "${1}/Godzilla 2 (USA).png" "${1}/Godzilla 2 - War of the Monsters (USA).png" 2> /dev/null
+  mv "${1}/Godzilla (USA).png" "${1}/Godzilla - Monster of Monsters! (USA).png" 2> /dev/null
+  mv "${1}/Gremlins 2 (USA).png" "${1}/Gremlins 2 - The New Batch (USA).png" 2> /dev/null
+  mv "${1}/Guardian Legend (USA).png" "${1}/Guardian Legend, The (USA).png" 2> /dev/null
+  mv "${1}/Heavy Shreddin_ (USA).png" "${1}/Heavy Shreddin' (USA).png" 2> /dev/null
+  mv "${1}/Home Alone 2 (USA).png" "${1}/Home Alone 2 - Lost in New York (USA).png" 2> /dev/null
+  mv "${1}/Ice Climber (USA).png" "${1}/Ice Climber (USA, Europe, Korea).png" 2> /dev/null
+  mv "${1}/Ikari Warriors III (USA).png" "${1}/Ikari III - The Rescue (USA).png" 2> /dev/null
+  mv "${1}/Ikari Warriors II (USA).png" "${1}/Ikari Warriors II - Victory Road (USA).png" 2> /dev/null
+  # mv "${1}/Indiana Jones and the Last Crusade (USA).png" "${1}/Indiana Jones and the Last Crusade (USA).png" 2> /dev/null
+  mv "${1}/Indiana Jones and the Temple of Doom (USA) (Tengen Unlicensed).png" "${1}/Indiana Jones and the Temple of Doom (USA) (Unl).png" 2> /dev/null
+  mv "${1}/Jackie Chan_s Action Kung Fu (USA).png" "${1}/Jackie Chan's Action Kung Fu (USA).png" 2> /dev/null
+  mv "${1}/Jetsons, The - Cogswell_s Caper (USA).png" "${1}/Jetsons, The - Cogswell's Caper (USA).png" 2> /dev/null
+  mv "${1}/John Elway_s Quarterback (USA).png" "${1}/John Elway's Quarterback (USA).png" 2> /dev/null
+  mv "${1}/Jordan vs. Bird (USA).png" "${1}/Jordan vs Bird - One on One (USA).png" 2> /dev/null
+  mv "${1}/Kabuki Quantum Fighter (USA).png" "${1}/Kabuki - Quantum Fighter (USA).png" 2> /dev/null
+  mv "${1}/Kickmaster (USA).png" "${1}/KickMaster (USA).png" 2> /dev/null
+  mv "${1}/Kid Icarus (USA).png" "${1}/Kid Icarus (USA, Europe).png" 2> /dev/null
+  mv "${1}/Kid Klown (USA).png" "${1}/Kid Klown in Night Mayor World (USA).png" 2> /dev/null
+  mv "${1}/Kid Kool (USA).png" "${1}/Kid Kool and the Quest for the Seven Wonder Herbs (USA).png" 2> /dev/null
+  mv "${1}/King_s Knight (USA).png" "${1}/King's Knight (USA).png" 2> /dev/null
+  mv "${1}/King_s Quest V (USA).png" "${1}/King's Quest V (USA).png" 2> /dev/null
+  mv "${1}/Kirby_s Adventure (USA).png" "${1}/Kirby's Adventure (USA).png" 2> /dev/null
+  mv "${1}/Kiwi Kraze (USA).png" "${1}/Kiwi Kraze - A Bird-Brained Adventure! (USA).png" 2> /dev/null
+  mv "${1}/Krusty_s Fun House (USA).png" "${1}/Krusty's Fun House (USA).png" 2> /dev/null
+  mv "${1}/Kung Fu (USA).png" "${1}/Kung Fu (Japan, USA).png" 2> /dev/null
+  mv "${1}/Legend of Zelda, The (USA (Full Shield Graphic).png" "${1}/Legend of Zelda, The (USA).png" 2> /dev/null
+  rm -f "${1}/Legend of Zelda, The (USA) (Exposed Cart).png" 2> /dev/null
+  mv "${1}/Little Nemo - Dream Master (USA).png" "${1}/Little Nemo - The Dream Master (USA).png" 2> /dev/null
+  mv "${1}/Low G Man (USA).png" "${1}/Low G Man - The Low Gravity Man (USA).png" 2> /dev/null
+  mv "${1}/Mach Rider (USA).png" "${1}/Mach Rider (Japan, USA).png" 2> /dev/null
+  mv "${1}/Mafat Conspiracy, The - Golgo 13 (USA).png" "${1}/Golgo 13 - Top Secret Episode (USA).png" 2> /dev/null
+  mv "${1}/Mappyland (USA).png" "${1}/Mappy-Land (USA).png" 2> /dev/null
+  mv "${1}/Mario Bros. (USA).png" "${1}/Mario Bros. (World).png" 2> /dev/null
+  mv "${1}/M.C Kids (USA).png" "${1}/M.C. Kids (USA).png" 2> /dev/null
+  mv "${1}/Metal Gear II - Snake_s Revenge (USA).png" "${1}/Snake's Revenge (USA).png" 2> /dev/null
+  # mv "${1}/MetalMech - Man _ Machine (USA).png" "${1}/MetalMech - Man _ Machine (USA).png" 2> /dev/null
+  mv "${1}/Metalstorm (USA).png" "${1}/Metal Storm (USA).png" 2> /dev/null
+  mv "${1}/Mike Tyson_s Punch Out!! (USA).png" "${1}/Mike Tyson's Punch-Out!! (Japan, USA).png" 2> /dev/null
+  mv "${1}/Milon_s Secret Castle (USA).png" "${1}/Milon's Secret Castle (USA).png" 2> /dev/null
+  mv "${1}/Monster In My Pocket (USA).png" "${1}/Monster in My Pocket (USA).png" 2> /dev/null
+  mv "${1}/Ms. Pac-Man (USA).png" "${1}/Ms. Pac-Man (USA) (Namco).png" 2> /dev/null
+  mv "${1}/Ms. Pac-Man (USA) (Tengen Unlicensed).png" "${1}/Ms. Pac-Man (USA) (Tengen) (Unl).png" 2> /dev/null
+  mv "${1}/New Ghostbusters II (USA) (Custom, Unreleased).png" "${1}/New Ghostbusters II (USA) (Proto).png" 2> /dev/null
+  mv "${1}/Ninja Gaiden III (USA).png" "${1}/Ninja Gaiden III - The Ancient Ship of Doom (USA).png" 2> /dev/null
+  mv "${1}/Ninja Gaiden II (USA).png" "${1}/Ninja Gaiden II - The Dark Sword of Chaos (USA).png" 2> /dev/null
+  mv "${1}/Nintendo World Championships 1990 (USA, Custom).png" "${1}/Nintendo World Championships 1990 (USA) (Competition Cart).png" 2> /dev/null
+  mv "${1}/Nobunaga_s Ambition II (USA).png" "${1}/Nobunaga's Ambition II (USA).png" 2> /dev/null
+  mv "${1}/Nobunaga_s Ambition (USA).png" "${1}/Nobunaga's Ambition (USA).png" 2> /dev/null
+  mv "${1}/Pac-Mania (USA) (Tengen Unlicensed).png" "${1}/Pac-Mania (USA) (Unl).png" 2> /dev/null
+  mv "${1}/Pinball (USA).png" "${1}/Pinball (Japan, USA).png" 2> /dev/null
+  mv "${1}/Popeye (USA).png" "${1}/Popeye (World) (Rev 1).png" 2> /dev/null
+  mv "${1}/P.O.W. (USA).png" "${1}/P.O.W. - Prisoners of War (USA).png" 2> /dev/null
+  mv "${1}/Puss n Boots - Pero_s Great Adventure (USA).png" "${1}/Puss 'n Boots - Pero's Great Adventure (USA).png" 2> /dev/null
+  mv "${1}/Qix (USA).png" "${1}/QIX (USA).png" 2> /dev/null
+  mv "${1}/Ren _ Stimpy Show, The - Buckeroos! (USA).png" "${1}/Ren _ Stimpy Show, The - Buckeroo\$! (USA).png" 2> /dev/null
+  mv "${1}/Rockin_ Kats (USA).png" "${1}/Rockin' Kats (USA).png" 2> /dev/null
+  mv "${1}/Rolling Thunder (USA) (Tengen Unlicensed).png" "${1}/Rolling Thunder (USA) (Unl).png" 2> /dev/null
+  mv "${1}/Rush_n Attack (USA).png" "${1}/Rush'n Attack (USA).png" 2> /dev/null
+  mv "${1}/S.C.A.T. (USA).png" "${1}/S.C.A.T. - Special Cybernetic Attack Team (USA).png" 2> /dev/null
+  mv "${1}/Snake Rattle N Roll (USA).png" "${1}/Snake Rattle n Roll (USA).png" 2> /dev/null
+  mv "${1}/Snoopy_s Silly Sports Spectacular! (USA).png" "${1}/Snoopy's Silly Sports Spectacular! (USA).png" 2> /dev/null
+  mv "${1}/Solar Jetman - Hunt for the Golden Warship (USA).png" "${1}/Solar Jetman - Hunt for the Golden Warpship (USA).png" 2> /dev/null
+  mv "${1}/Solomon_s Key (USA).png" "${1}/Solomon's Key (USA).png" 2> /dev/null
+  mv "${1}/Solstice (USA).png" "${1}/Solstice - The Quest for the Staff of Demnos (USA).png" 2> /dev/null
+  mv "${1}/StarTropics II - Zoda_s Revenge (USA).png" "${1}/Zoda's Revenge - StarTropics II (USA).png" 2> /dev/null
+  mv "${1}/Street Fighter 2010 (USA).png" "${1}/Street Fighter 2010 - The Final Fight (USA).png" 2> /dev/null
+  mv "${1}/Super Mario Bros. (USA).png" "${1}/Super Mario Bros. (World) (HVC-SM).png" 2> /dev/null
+  mv "${1}/Superman (USA).png" "${1}/Superman (USA) (Kemco).png" 2> /dev/null
+  # mv "${1}/Target - Renegade (USA).png" "${1}/Target - Renegade (USA).png" 2> /dev/null
+  cp "${1}/Tecmo NBA Basketball (USA).png" "${1}/Tecmo NBA Basketball (USA) (NES-N7).png" 2> /dev/null
+  mv "${1}/Tecmo NBA Basketball (USA).png" "${1}/Tecmo NBA Basketball (USA) (NES-BK).png" 2> /dev/null
+  mv "${1}/Teenage Mutant Ninja Turtles III (USA).png" "${1}/Teenage Mutant Ninja Turtles III - The Manhattan Project (USA).png" 2> /dev/null
+  mv "${1}/Teenage Mutant Ninja Turtles II (USA).png" "${1}/Teenage Mutant Ninja Turtles II - The Arcade Game (USA).png" 2> /dev/null
+  mv "${1}/Tetris (USA) (Tengen Unlicensed).png" "${1}/Tetris (USA) (Tengen) (Unl).png" 2> /dev/null
+  mv "${1}/Tiny Toon Adventures 2 (USA).png" "${1}/Tiny Toon Adventures 2 - Trouble in Wackyland (USA).png" 2> /dev/null
+  mv "${1}/Tiny Toon Adventures - Cartoon Workshop (USA).png" "${1}/Tiny Toon Adventures Cartoon Workshop (USA).png" 2> /dev/null
+  mv "${1}/Toobin_ (USA) (Tengen Unlicensed).png" "${1}/Toobin' (USA) (Unl).png" 2> /dev/null
+  mv "${1}/Town _ Country Surf Designs - Thrilla_s Surfari (USA).png" "${1}/Town _ Country Surf Designs - Thrilla's Surfari (USA).png" 2> /dev/null
+  mv "${1}/Untouchables, The (USA) (Official, Variant 1).png" "${1}/Untouchables, The (USA).png" 2> /dev/null
+  rm -f "${1}/Untouchables, The (USA) (Official, Variant 2).png" 2> /dev/null
+  mv "${1}/Urban Champion (USA).png" "${1}/Urban Champion (World).png" 2> /dev/null
+  mv "${1}/Vindicators (USA) (Tengen Unlicensed).png" "${1}/Vindicators (USA) (Unl).png" 2> /dev/null
+  mv "${1}/Volleyball (USA).png" "${1}/Volleyball (USA, Europe).png" 2> /dev/null
+  mv "${1}/Wario_s Woods (USA).png" "${1}/Wario's Woods (USA).png" 2> /dev/null
+  mv "${1}/Wayne_s World (USA).png" "${1}/Wayne's World (USA).png" 2> /dev/null
+  mv "${1}/Werewolf (USA).png" "${1}/Werewolf - The Last Warrior (USA).png" 2> /dev/null
+  mv "${1}/Whomp _Em (USA).png" "${1}/Whomp 'Em (USA).png" 2> /dev/null
+  mv "${1}/Wizards _ Warriors II - Ironsword (USA).png" "${1}/IronSword - Wizards _ Warriors II (USA).png" 2> /dev/null
+  # mv "${1}/World Champ (USA).png" "${1}/World Champ (USA).png" 2> /dev/null
+  mv "${1}/Wrecking Crew (USA).png" "${1}/Wrecking Crew (World).png" 2> /dev/null
+  mv "${1}/WURM (USA).png" "${1}/Wurm - Journey to the Center of the Earth! (USA).png" 2> /dev/null
+  mv "${1}/Xevious (USA).png" "${1}/Xevious - The Avenger (USA).png" 2> /dev/null
+  mv "${1}/Yoshi_s Cookie (USA).png" "${1}/Yoshi's Cookie (USA).png" 2> /dev/null
+}
 
-do_mogrify "${RUNDIR}"
+do_rename "${RUNDIR}"
+
+#echo -n "Resizing Reddit thumbs..."
+#do_mogrify "${RUNDIR}"
+#echo "done"
+
 new_additions "${RUNDIR}" "${TNDIR}"
-not_in_db "${TNDIR}"
+not_in_db "${RUNDIR}" "Reddit"
+not_in_db "${TNDIR}" "Retroarch"
