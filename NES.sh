@@ -1,35 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 RUNDIR='/mnt/space/Download/boxarts/NES Classic - Accurate USA Box Art (431 covers)/'
 TNDIR='/mnt/space/Games/misc/thumbnails/Nintendo - Nintendo Entertainment System/Named_Boxarts/'
 DB='/usr/local/share/retroarch/database/metadat/no-intro/Nintendo - Nintendo Entertainment System.dat'
-
-new_additions() {
-  for fich in "${1}"/*.png; do
-    GAME=$(basename "${fich}")
-    if [ ! -f "${2}/${GAME}" ]; then
-      echo "New thumbnail: ${GAME}"
-    fi
-  done
-}
-
-not_in_db() {
-  for fich in "${1}"/*.png; do
-    GAME=$(basename "${fich}" .png)
-    if ! sed -e 's/&/_/g' -e 's/:/_/g' -e 's/\*/_/g' -e 's!/!_!g' -e 's/`/_/g' -e 's/</_/g' -e 's/>/_/g' -e 's/?/_/g' -e 's/\\/_/g' -e 's/|/_/g' "$DB" | grep -q -w "\"${GAME}\""; then
-      echo "${2} thumb not in DB: ${GAME}"
-    fi
-  done
-}
-
-do_mogrify() {
-  for fich in "${1}"/*.png; do
-    if identify "${fich}" | grep -q -v 512x; then
-      mogrify -format png -resize 512x "${fich}" 2> /dev/null
-      echo -n "."
-    fi
-  done
-}
 
 do_rename() {
   mv "${1}/10-Yard Fight (USA).png" "${1}/10-Yard Fight (USA, Europe).png" 2> /dev/null
@@ -183,12 +156,86 @@ do_rename() {
   mv "${1}/Yoshi_s Cookie (USA).png" "${1}/Yoshi's Cookie (USA).png" 2> /dev/null
 }
 
-do_rename "${RUNDIR}"
+do_mogrify() {
+  echo -n "Resizing Reddit thumbs"
+  for fich in "${1}"/*.png; do
+    if identify "${fich}" | grep -q -v 512x; then
+      mogrify -format png -resize 512x "${fich}" 2> /dev/null
+      echo -n "."
+    fi
+  done
+  echo "done"
+}
 
-echo -n "Resizing Reddit thumbs..."
-do_mogrify "${RUNDIR}"
-echo "done"
+new_additions() {
+  for fich in "${1}"/*.png; do
+    GAME=$(basename "${fich}")
+    if [ ! -f "${2}/${GAME}" ]; then
+      echo "New thumbnail: ${GAME}"
+    fi
+  done
+}
 
-new_additions "${RUNDIR}" "${TNDIR}"
-not_in_db "${RUNDIR}" "Reddit"
+not_in_db() {
+  for fich in "${1}"/*.png; do
+    GAME=$(basename "${fich}" .png)
+    if ! sed -e 's/&/_/g' -e 's/:/_/g' -e 's/\*/_/g' -e 's!/!_!g' -e 's/`/_/g' -e 's/</_/g' -e 's/>/_/g' -e 's/?/_/g' -e 's/\\/_/g' -e 's/|/_/g' "$DB" | grep -q -w "name \"${GAME}\""; then
+      echo "${2} thumb not in DB: ${GAME}"
+    fi
+  done
+}
+
+copy_dup() {
+  LISTREV=$(grep \(Rev\ .\) "${DB}" | grep name\ \" | grep -v rom\ \( | cut -d '"' -f2)
+  LISTVC=$(grep \(Virtual\ Console\) "${DB}" | grep name\ \" | grep -v rom\ \( | cut -d '"' -f2)
+  LISTGC=$(grep \(GameCube\ Edition\) "${DB}" | grep name\ \" | grep -v rom\ \( | cut -d '"' -f2)
+  LISTBETA=$(grep \(Beta.*\) "${DB}" | grep name\ \" | grep -v rom\ \( | cut -d '"' -f2)
+  LISTSAMPLE=$(grep \(Sample\) "${DB}" | grep name\ \" | grep -v rom\ \( | cut -d '"' -f2)
+  while IFS= read -r GAME; do
+    REVGAME=$(echo "${GAME}" | sed -e 's/ (Rev .).*//')
+    if [ -f "${1}/${REVGAME}.png" ]; then
+      cp "${1}/${REVGAME}.png" "${1}/${GAME}.png"
+    fi
+  done <<< "${LISTREV}"
+  while IFS= read -r GAME; do
+    VCGAME=$(echo "${GAME}" | sed -e 's/ (Virtual Console).*//')
+    if [ -f "${1}/${VCGAME}.png" ]; then
+      cp "${1}/${VCGAME}.png" "${1}/${GAME}.png"
+    fi
+  done <<< "${LISTVC}"
+  while IFS= read -r GAME; do
+    GCGAME=$(echo "${GAME}" | sed -e 's/ (GameCube Edition).*//')
+    if [ -f "${1}/${GCGAME}.png" ]; then
+      cp "${1}/${GCGAME}.png" "${1}/${GAME}.png"
+    fi
+  done <<< "${LISTGC}"
+  while IFS= read -r GAME; do
+    BETAGAME=$(echo "${GAME}" | sed -e 's/ (Beta.*).*//')
+    if [ -f "${1}/${BETAGAME}.png" ]; then
+      cp "${1}/${BETAGAME}.png" "${1}/${GAME}.png"
+    fi
+  done <<< "${LISTBETA}"
+  while IFS= read -r GAME; do
+    SAMPLEGAME=$(echo "${GAME}" | sed -e 's/ (Sample).*//')
+    if [ -f "${1}/${SAMPLEGAME}.png" ]; then
+      cp "${1}/${SAMPLEGAME}.png" "${1}/${GAME}.png"
+    fi
+  done <<< "${LISTSAMPLE}"
+}
+
+find_missing() {
+  DBROM=$(grep 'name "' "${DB}" | grep -v rom\ \(\ | cut -d '"' -f2 | sed -e 's/&/_/g' -e 's/:/_/g' -e 's/\*/_/g' -e 's!/!_!g' -e 's/`/_/g' -e 's/</_/g' -e 's/>/_/g' -e 's/?/_/g' -e 's/\\/_/g' -e 's/|/_/g')
+  while IFS= read -r GAME; do
+    if [ ! -f "${1}"/"${GAME}.png" ]; then
+      echo "Missing thumbnail: ${GAME}"
+    fi
+  done <<< "${DBROM}"
+}
+
+#do_rename "${RUNDIR}"
+#do_mogrify "${RUNDIR}"
+#new_additions "${RUNDIR}" "${TNDIR}"
+#not_in_db "${RUNDIR}" "Reddit"
 not_in_db "${TNDIR}" "Retroarch"
+copy_dup "${TNDIR}"
+find_missing "${TNDIR}"
